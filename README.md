@@ -63,7 +63,7 @@ var patas = new Patas({
 });
 
 var query = function(callback) {
-    var sql = 'SELECT $1, $2';
+    var sql = 'SELECT $1::int AS p1, $2::int AS p2;';
     var params = [1, 2];
     var ttl = 10000; // you can use a integer array for each store
     patas.query(sql, params, ttl, function(err, result, cacheName) {
@@ -89,23 +89,23 @@ This will display:
 result: undefined { command: 'SELECT',
   rowCount: 1,
   oid: NaN,
-  rows: [ anonymous { id: 1, name: 'test' } ],
+  rows: [ anonymous { p1: 1, p2: 2 } ],
   fields:
-   [ { name: 'id',
-       tableID: 24830,
-       columnID: 1,
+   [ { name: 'p1',
+       tableID: 0,
+       columnID: 0,
        dataTypeID: 23,
        dataTypeSize: 4,
        dataTypeModifier: -1,
        format: 'text' },
-     { name: 'name',
-       tableID: 24830,
-       columnID: 2,
-       dataTypeID: 1043,
-       dataTypeSize: -1,
-       dataTypeModifier: 132,
+     { name: 'p2',
+       tableID: 0,
+       columnID: 0,
+       dataTypeID: 23,
+       dataTypeSize: 4,
+       dataTypeModifier: -1,
        format: 'text' } ],
-  _parsers: [ [Function], [Function: noParse] ],
+  _parsers: [ [Function], [Function] ],
   RowCtor: [Function: anonymous],
   rowAsArray: false,
   _getTypeParser: [Function: bound ] }
@@ -113,21 +113,21 @@ result: undefined { command: 'SELECT',
 result: memory-lru { command: 'SELECT',
   rowCount: 1,
   oid: null,
-  rows: [ { id: 1, name: 'test' } ],
+  rows: [ { p1: 1, p2: 2 } ],
   fields:
-   [ { name: 'id',
-       tableID: 24830,
-       columnID: 1,
+   [ { name: 'p1',
+       tableID: 0,
+       columnID: 0,
        dataTypeID: 23,
        dataTypeSize: 4,
        dataTypeModifier: -1,
        format: 'text' },
-     { name: 'name',
-       tableID: 24830,
-       columnID: 2,
-       dataTypeID: 1043,
-       dataTypeSize: -1,
-       dataTypeModifier: 132,
+     { name: 'p2',
+       tableID: 0,
+       columnID: 0,
+       dataTypeID: 23,
+       dataTypeSize: 4,
+       dataTypeModifier: -1,
        format: 'text' } ],
   rowAsArray: false }
 ```

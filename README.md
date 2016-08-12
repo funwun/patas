@@ -62,18 +62,25 @@ var patas = new Patas({
     stores: [store1, store2]
 });
 
-var sql = 'SELECT $1, $2';
-var params = [1, 2];
-var ttl = 10000; // you can use a integer array for each store
+var query = function(callback) {
+    var sql = 'SELECT $1, $2';
+    var params = [1, 2];
+    var ttl = 10000; // you can use a integer array for each store
+    patas.query(sql, params, ttl, function(err, result, cacheName) {
+        if (err) throw err;
+
+        console.log('result:', cacheName, result);
+        callback();
+    });
+};
 
 // query data
-patas.query(sql, params, ttl, function(err, result, cacheName) {
-    if (err) throw err;
-
-    console.log('result:', cacheName, result, '\n');
-
-    // exit process, or close pool of pgsql
-    process.exit(0);
+query(function() {
+    setTimeout(function() {
+        query(function() {
+            process.exit(0);
+        });
+    }, 1000);
 });
 ```
 This will display:

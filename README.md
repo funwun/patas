@@ -135,7 +135,7 @@ result: memory-lru { command: 'SELECT',
 ## Options
 * `source` Database source engine to query original data, get detail from the above `Data Source Engines` list.
 
-* `stores` Array list of cache stores, get detail from the above `Cache Store Engines` list
+* `stores` Array list of cache stores, get detail from the above [Cache Store Engines](https://github.com/funwun/patas#cache-store-engines) list
 
 ## API
 * `query(sql, params, [ttl,] callback)`

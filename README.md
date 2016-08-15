@@ -65,8 +65,12 @@ var patas = new Patas({
 var query = function(callback) {
     var sql = 'SELECT $1::int AS p1, $2::int AS p2;';
     var params = [1, 2];
-    var ttl = 10000; // you can use a integer array for each store
-    patas.query(sql, params, ttl, function(err, result, cacheName) {
+    var ttl = 10000; // 10s
+
+    // you can use a integer array for each store:
+    //var ttl = [500, 1500];
+
+    patas.query(sql).values(params).ttl(ttl).exec(function(err, result, cacheName) {
         if (err) throw err;
 
         console.log('result:', cacheName, result);
@@ -74,7 +78,6 @@ var query = function(callback) {
     });
 };
 
-// query data
 query(function() {
     setTimeout(function() {
         query(function() {
@@ -82,6 +85,7 @@ query(function() {
         });
     }, 1000);
 });
+
 ```
 This will display:
 
@@ -132,21 +136,61 @@ result: memory-lru { command: 'SELECT',
   rowAsArray: false }
 ```
 
-## Options
-* `source` Database source engine to query original data, get detail from the above `Data Source Engines` list.
-
-* `stores` Array list of cache stores, get detail from the above [Cache Store Engines](https://github.com/funwun/patas#cache-store-engines) list
-
 ## API
-* `query(sql, params, [ttl,] callback)`
 
- Query data, if the data is found in the store it return cached data, else return the database query result. It will cache the database query result to store with exipred time (ttl) auto.
- ```javascript
- patas.query('SELECT $1', [1], 1000, function(err, result, cacheName) {
-     if (err) throw err;
-     console.log('result:', cacheName, result);
- }
- ```
+### Patas
+
+#### `constructor Patas({source: Object, stores: Array})`
+
+Constructs and returns a new `Patas` instance.
+
+`source` Database source engine to query original data, get detail from the [Data Source Engines](https://github.com/funwun/patas#data-source-engines) list.
+
+`stores` Array list of cache stores, get detail from the [Cache Store Engines](https://github.com/funwun/patas#cache-store-engines) list.
+
+```javascript
+var patas = new Patas({
+    source: source,
+    stores: [store1, store2]
+});
+```
+
+#### `patas.query(sql:string)`
+
+Returns a new `Query` instance. You must supply the SQL statement via `sql` parameter.
+
+```javascript
+var query = patas.query('SELECT $1::int AS p1, $2::int AS p2;');
+```
+
+### Query
+
+#### `query.values(params:Array) -> query:Query`
+Set parameter values of query. All values are passed to the source database backend server and executed as a parameterized statement.
+```javascript
+query = query.values([1, 2]);
+```
+
+#### `query.ttl(ttl:Array) -> query:Query`
+Set TTL(Time to live) for each cache store, overwrite default TTL of `patas.stores[n].ttl`.
+```javascript
+// set 1st store TTL to 500ms, 2nd to 1.5s of current query
+query = query.ttl([500, 1500]);
+
+// set all stores TTL to 1.5s of current query
+query = query.ttl(1500);
+```
+
+#### `query.exec(callback:function(err:Error, result:Object, <cacheName:string>))`
+Execute query, if the data is found in the cache store, it returns the data from the cache store, otherwise it returns the data from source database. It will save the database query result to cache store with expired time (TTL). The `cacheName` is cache store name of data returned, default is `undefined`(from database source, no cache). Calls the callback with an Error if there was an error.
+
+```javascript
+query.exec(function(err, result, cacheName) {
+    if (err) throw err;
+    console.log('result:', cacheName, result);
+    callback();
+});
+```
 
 ## License
 

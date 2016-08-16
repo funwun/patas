@@ -64,13 +64,13 @@ var patas = new Patas({
 
 var query = function(callback) {
     var sql = 'SELECT $1::int AS p1, $2::int AS p2;';
-    var params = [1, 2];
-    var ttl = 10000; // 10s
+    var values = [1, 2];
+    var ttl = 10000; // overwrite all stores ttl, 10s
 
     // you can use a integer array for each store:
     //var ttl = [500, 1500];
 
-    patas.query(sql).values(params).ttl(ttl).exec(function(err, result, cacheName) {
+    patas.query(sql).values(values).ttl(ttl).exec(function(err, result, cacheName) {
         if (err) throw err;
 
         console.log('result:', cacheName, result);
@@ -85,7 +85,6 @@ query(function() {
         });
     }, 1000);
 });
-
 ```
 This will display:
 

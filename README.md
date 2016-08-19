@@ -187,7 +187,6 @@ Execute query, if the data is found in the cache store, it returns the data from
 query.exec(function(err, result, cacheName) {
     if (err) throw err;
     console.log('result:', cacheName, result);
-    callback();
 });
 ```
 
